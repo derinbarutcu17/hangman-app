@@ -125,7 +125,7 @@ const SetupScreen = ({ onSelect }) => (
 );
 
 // Virtual keyboard component
-const Keyboard = ({ selectedLetter, usedLetters, onKeyPress, onConfirm, onDiscard }) => (
+const Keyboard = ({ selectedLetter, usedLetters, onKeyPress, onConfirm, onDiscard, onClear }) => (
   <div className="keyboard-container">
     {KEYBOARD_ROWS.map((row, rowIndex) => (
       <div key={rowIndex} className="keyboard-row">
@@ -154,13 +154,22 @@ const Keyboard = ({ selectedLetter, usedLetters, onKeyPress, onConfirm, onDiscar
           );
         })}
         {rowIndex === 2 && (
-          <button
-            className="key action-key discard"
-            onClick={onDiscard}
-            disabled={!selectedLetter}
-          >
-            ✕
-          </button>
+          <>
+            <button
+              className="key action-key discard"
+              onClick={onDiscard}
+              disabled={!selectedLetter}
+            >
+              ✕
+            </button>
+            <button
+              className="key action-key clear"
+              onClick={onClear}
+              title="Clear All"
+            >
+              ⟲
+            </button>
+          </>
         )}
       </div>
     ))}
@@ -221,9 +230,18 @@ function App() {
   }, []);
 
   const handleBlankTap = useCallback((index) => {
-    if (blanks[index] !== null) return; // Already filled
+    const currentLetter = blanks[index];
+    if (currentLetter !== null) {
+      // Remove the letter from the blank
+      const newBlanks = [...blanks];
+      newBlanks[index] = null;
+      setBlanks(newBlanks);
+      // Remove from usedLetters so it can be used again
+      setUsedLetters(usedLetters.filter((l) => l !== currentLetter));
+      return;
+    }
     setSelectedBlankIndex(selectedBlankIndex === index ? null : index);
-  }, [blanks, selectedBlankIndex]);
+  }, [blanks, selectedBlankIndex, usedLetters]);
 
   const handleKeyPress = useCallback((letter) => {
     if (usedLetters.includes(letter)) return;
@@ -259,6 +277,26 @@ function App() {
     setSelectedLetter(null);
   }, [selectedLetter, graveyard, usedLetters]);
 
+  const handleGraveyardTap = useCallback((letter, index) => {
+    // Remove the letter from graveyard
+    const newGraveyard = graveyard.filter((_, i) => i !== index);
+    setGraveyard(newGraveyard);
+    // Remove from usedLetters so it can be used again
+    setUsedLetters(usedLetters.filter((l) => l !== letter));
+  }, [graveyard, usedLetters]);
+
+  const handleClearAll = useCallback(() => {
+    // Clear all blanks
+    setBlanks(Array(letterCount).fill(null));
+    // Clear graveyard
+    setGraveyard([]);
+    // Clear used letters
+    setUsedLetters([]);
+    // Clear selections
+    setSelectedLetter(null);
+    setSelectedBlankIndex(null);
+  }, [letterCount]);
+
   return (
     <div className="app">
       <AnimatePresence mode="wait">
@@ -282,7 +320,10 @@ function App() {
                       className="graveyard-letter"
                       initial={{ scale: 0, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0, opacity: 0 }}
                       transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                      onClick={() => handleGraveyardTap(letter, index)}
+                      whileTap={{ scale: 0.9 }}
                     >
                       {letter}
                     </motion.div>
@@ -333,6 +374,7 @@ function App() {
               onKeyPress={handleKeyPress}
               onConfirm={handleConfirm}
               onDiscard={handleDiscard}
+              onClear={handleClearAll}
             />
           </motion.div>
         )}

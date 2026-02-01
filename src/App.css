@@ -101,6 +101,16 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 6px rgba(238, 90, 90, 0.3);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.graveyard-letter:hover {
+  transform: scale(1.1);
+}
+
+.graveyard-letter:active {
+  transform: scale(0.9);
 }
 
 .reset-btn {
@@ -216,7 +226,7 @@
 
 /* iOS-style Keyboard */
 .keyboard-container {
-  padding: 8px 4px;
+  padding: 8px 2px;
   padding-bottom: max(env(safe-area-inset-bottom), 12px);
   background: #d1d3d9;
   border-radius: 12px 12px 0 0;
@@ -226,8 +236,9 @@
 .keyboard-row {
   display: flex;
   justify-content: center;
-  gap: 5px;
-  margin-bottom: 8px;
+  gap: 3px;
+  margin-bottom: 6px;
+  padding: 0 2px;
 }
 
 .keyboard-row:last-child {
@@ -236,13 +247,15 @@
 
 .key {
   height: 42px;
-  min-width: 32px;
-  padding: 0 8px;
+  flex: 1;
+  max-width: 36px;
+  min-width: 0;
+  padding: 0 2px;
   border-radius: 6px;
   border: none;
   background: #ffffff;
   color: #1c1c1e;
-  font-size: 18px;
+  font-size: clamp(14px, 4vw, 18px);
   font-weight: 500;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -269,7 +282,9 @@
 
 .key.action-key {
   background: #aeb3bb;
-  min-width: 56px;
+  flex: 0 0 auto;
+  min-width: 36px;
+  max-width: 44px;
   font-size: 14px;
   font-weight: 600;
 }
@@ -285,6 +300,11 @@
 
 .key.action-key.discard {
   background: #ff3b30;
+  color: white;
+}
+
+.key.action-key.clear {
+  background: #ff9500;
   color: white;
 }
 
