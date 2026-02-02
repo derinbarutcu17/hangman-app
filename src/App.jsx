@@ -216,7 +216,6 @@ function App() {
     setSelectedBlankIndex(null);
     setSelectedLetter(null);
     setGraveyard([]);
-    setUsedLetters([]);
   }, []);
 
   const handleReset = useCallback(() => {
@@ -225,7 +224,6 @@ function App() {
     setSelectedBlankIndex(null);
     setSelectedLetter(null);
     setGraveyard([]);
-    setUsedLetters([]);
   }, []);
 
   const handleBlankTap = useCallback((index) => {
