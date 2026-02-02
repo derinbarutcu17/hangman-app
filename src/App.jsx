@@ -205,7 +205,6 @@ function App() {
   const [selectedBlankIndex, setSelectedBlankIndex] = useState(null);
   const [selectedLetter, setSelectedLetter] = useState(null);
   const [graveyard, setGraveyard] = useState([]);
-  const [usedLetters, setUsedLetters] = useState([]);
 
   const wrongCount = graveyard.length;
   const isGameOver = wrongCount >= MAX_WRONG_GUESSES;
@@ -265,28 +264,21 @@ function App() {
     // Add to graveyard
     setGraveyard([...graveyard, selectedLetter]);
     
-    // Mark letter as used (for disabling key)
-    setUsedLetters([...usedLetters, selectedLetter]);
-    
     // Clear selection
     setSelectedLetter(null);
-  }, [selectedLetter, graveyard, usedLetters]);
+  }, [selectedLetter, graveyard]);
 
   const handleGraveyardTap = useCallback((letter, index) => {
     // Remove the letter from graveyard
     const newGraveyard = graveyard.filter((_, i) => i !== index);
     setGraveyard(newGraveyard);
-    // Remove from usedLetters so it can be used again
-    setUsedLetters(usedLetters.filter((l) => l !== letter));
-  }, [graveyard, usedLetters]);
+  }, [graveyard]);
 
   const handleClearAll = useCallback(() => {
     // Clear all blanks
     setBlanks(Array(letterCount).fill(null));
     // Clear graveyard
     setGraveyard([]);
-    // Clear used letters
-    setUsedLetters([]);
     // Clear selections
     setSelectedLetter(null);
     setSelectedBlankIndex(null);
@@ -365,7 +357,7 @@ function App() {
             {/* Virtual Keyboard */}
             <Keyboard
               selectedLetter={selectedLetter}
-              usedLetters={usedLetters}
+              usedLetters={graveyard}
               onKeyPress={handleKeyPress}
               onConfirm={handleConfirm}
               onDiscard={handleDiscard}
