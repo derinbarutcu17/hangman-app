@@ -236,17 +236,15 @@ function App() {
       const newBlanks = [...blanks];
       newBlanks[index] = null;
       setBlanks(newBlanks);
-      // Remove from usedLetters so it can be used again
-      setUsedLetters(usedLetters.filter((l) => l !== currentLetter));
       return;
     }
     setSelectedBlankIndex(selectedBlankIndex === index ? null : index);
-  }, [blanks, selectedBlankIndex, usedLetters]);
+  }, [blanks, selectedBlankIndex]);
 
   const handleKeyPress = useCallback((letter) => {
-    if (usedLetters.includes(letter)) return;
+    if (graveyard.includes(letter)) return;
     setSelectedLetter(selectedLetter === letter ? null : letter);
-  }, [selectedLetter, usedLetters]);
+  }, [selectedLetter, graveyard]);
 
   const handleConfirm = useCallback(() => {
     if (!selectedLetter || selectedBlankIndex === null) return;
@@ -256,13 +254,10 @@ function App() {
     newBlanks[selectedBlankIndex] = selectedLetter;
     setBlanks(newBlanks);
     
-    // Mark letter as used
-    setUsedLetters([...usedLetters, selectedLetter]);
-    
     // Clear selections
     setSelectedLetter(null);
     setSelectedBlankIndex(null);
-  }, [selectedLetter, selectedBlankIndex, blanks, usedLetters]);
+  }, [selectedLetter, selectedBlankIndex, blanks]);
 
   const handleDiscard = useCallback(() => {
     if (!selectedLetter) return;
@@ -270,7 +265,7 @@ function App() {
     // Add to graveyard
     setGraveyard([...graveyard, selectedLetter]);
     
-    // Mark letter as used
+    // Mark letter as used (for disabling key)
     setUsedLetters([...usedLetters, selectedLetter]);
     
     // Clear selection
