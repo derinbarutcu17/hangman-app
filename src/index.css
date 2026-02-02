@@ -17,12 +17,15 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
+html, body {
   margin: 0;
+  padding: 0;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 #root {

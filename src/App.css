@@ -226,19 +226,20 @@
 
 /* iOS-style Keyboard */
 .keyboard-container {
-  padding: 8px;
+  padding: 10px 6px;
   padding-bottom: max(env(safe-area-inset-bottom), 12px);
   background: #d1d3d9;
   border-radius: 12px 12px 0 0;
-  margin: 0 -16px;
+  width: 100%;
   box-sizing: border-box;
+  margin-top: auto;
 }
 
 .keyboard-row {
   display: flex;
   justify-content: center;
-  gap: 3px;
-  margin-bottom: 6px;
+  gap: 4px;
+  margin-bottom: 8px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -248,29 +249,29 @@
 }
 
 .key {
-  height: 42px;
-  flex: 1 1 0;
-  max-width: 32px;
+  height: 46px;
+  flex: 1 1 0%;
   min-width: 0;
   padding: 0;
   border-radius: 6px;
   border: none;
   background: #ffffff;
   color: #1c1c1e;
-  font-size: clamp(13px, 3.5vw, 18px);
+  font-size: clamp(12px, 4vw, 18px);
   font-weight: 500;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   transition: all 0.1s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .key:active {
-  background: #c4c4c6;
-  transform: scale(0.95);
+  background: #adb5bd;
+  transform: translateY(1px);
 }
 
 .key.selected {
@@ -279,16 +280,15 @@
 }
 
 .key.used {
-  background: #e5e5ea;
-  color: #8e8e93;
+  background: #bdc3c7;
+  color: #7f8c8d;
+  opacity: 0.6;
 }
 
 .key.action-key {
-  background: #aeb3bb;
-  flex: 1.5 1 0;
-  max-width: 48px;
-  font-size: 14px;
-  font-weight: 600;
+  flex: 1.5 1 0%;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 .key.action-key:active {
