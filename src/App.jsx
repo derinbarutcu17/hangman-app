@@ -330,7 +330,7 @@ function App() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {/* Header with Graveyard */}
+            {/* Header with Graveyard and Controls */}
             <div className="game-header">
               <div className="graveyard">
                 <AnimatePresence>
@@ -350,9 +350,36 @@ function App() {
                   ))}
                 </AnimatePresence>
               </div>
-              <button className="reset-btn" onClick={handleReset} title="New Game">
-                <RotateCcw />
-              </button>
+              
+              <div className="controls-group">
+                <button 
+                  className="control-btn minus" 
+                  onClick={handleRemoveLetter}
+                  disabled={blanks.length <= 1}
+                  title="Remove Last"
+                >
+                  <Minus size={18} />
+                </button>
+                <button 
+                  className="control-btn space" 
+                  onClick={handleAddSpace}
+                  disabled={blanks.length >= 20}
+                  title="Add Space"
+                >
+                  <Space size={16} />
+                </button>
+                <button 
+                  className="control-btn plus" 
+                  onClick={handleAddLetter}
+                  disabled={blanks.length >= 20}
+                  title="Add Letter"
+                >
+                  <Plus size={18} />
+                </button>
+                <button className="control-btn reset-btn" onClick={handleReset} title="New Game">
+                  <RotateCcw size={18} />
+                </button>
+              </div>
             </div>
 
             {/* Hangman Drawing */}
@@ -360,17 +387,8 @@ function App() {
               <HangmanParts wrongCount={wrongCount} />
             </div>
 
-            {/* Word Blanks with +/- Controls */}
+            {/* Word Blanks */}
             <div className="word-controls-container">
-              <button 
-                className="control-btn minus" 
-                onClick={handleRemoveLetter}
-                disabled={blanks.length <= 1}
-                title="Remove Last"
-              >
-                <Minus size={20} />
-              </button>
-              
               <div className="word-container">
                 <div className="word-blanks">
                   {blanks.map((item, index) => {
@@ -403,25 +421,6 @@ function App() {
                     );
                   })}
                 </div>
-              </div>
-
-              <div className="plus-controls">
-                <button 
-                  className="control-btn space" 
-                  onClick={handleAddSpace}
-                  disabled={blanks.length >= 20}
-                  title="Add Space"
-                >
-                  <Space size={18} />
-                </button>
-                <button 
-                  className="control-btn plus" 
-                  onClick={handleAddLetter}
-                  disabled={blanks.length >= 20}
-                  title="Add Letter"
-                >
-                  <Plus size={20} />
-                </button>
               </div>
             </div>
 

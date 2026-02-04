@@ -81,6 +81,14 @@
   padding: 8px 4px;
 }
 
+.controls-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
 .graveyard {
   display: flex;
   flex-wrap: wrap;
@@ -113,30 +121,9 @@
   transform: scale(0.9);
 }
 
+/* Reset button inherits base control-btn styles but needs margin override */
 .reset-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: none;
-  background: #ffffff;
-  color: #8e8e93;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  margin-left: 12px;
-}
-
-.reset-btn:hover {
-  color: #ff3b30;
-}
-
-.reset-btn svg {
-  width: 20px;
-  height: 20px;
+  margin-left: 0;
 }
 
 /* Hangman Container */
@@ -176,12 +163,13 @@
   gap: 12px;
   overflow: hidden;
   padding: 0 16px;
+  flex-direction: column; /* Move blanks to own row */
 }
 
-.plus-controls {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
+/* Hide these here as they moved to header */
+.word-controls-container .control-btn,
+.word-controls-container .plus-controls {
+  display: none;
 }
 
 .control-btn {
