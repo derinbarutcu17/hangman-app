@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RotateCcw, Plus, Minus } from 'lucide-react';
+import { RotateCcw, Plus, Minus, Space } from 'lucide-react';
 import './App.css';
 
 // Turkish keyboard layout
@@ -11,6 +11,7 @@ const KEYBOARD_ROWS = [
 ];
 
 const MAX_WRONG_GUESSES = 6;
+const SPACE_MARKER = 'SPACE_MARKER';
 
 // Hangman SVG parts - drawn progressively
 const HangmanParts = ({ wrongCount }) => {
@@ -206,8 +207,17 @@ function App() {
   const [selectedLetter, setSelectedLetter] = useState(null);
   const [graveyard, setGraveyard] = useState([]);
 
+  // Sync letterCount with blanks length automatically
+  useEffect(() => {
+    if (blanks.length > 0) {
+      setLetterCount(blanks.length);
+    }
+  }, [blanks]);
+
   const wrongCount = graveyard.length;
   const isGameOver = wrongCount >= MAX_WRONG_GUESSES;
+  
+  // Win condition: All non-space blanks are filled
   const isWon = letterCount && blanks.every((b) => b !== null);
 
   const handleSelectLetterCount = useCallback((count) => {
@@ -228,6 +238,10 @@ function App() {
 
   const handleBlankTap = useCallback((index) => {
     const currentLetter = blanks[index];
+    
+    // Ignore taps on spaces
+    if (currentLetter === SPACE_MARKER) return;
+
     if (currentLetter !== null) {
       // Remove the letter from the blank
       const newBlanks = [...blanks];
@@ -273,33 +287,35 @@ function App() {
   }, [graveyard]);
 
   const handleClearAll = useCallback(() => {
-    // Clear all blanks
-    setBlanks(Array(letterCount).fill(null));
+    // Clear all blanks (preserve spaces)
+    setBlanks(blanks.map(b => b === SPACE_MARKER ? SPACE_MARKER : null));
     // Clear graveyard
     setGraveyard([]);
     // Clear selections
     setSelectedLetter(null);
     setSelectedBlankIndex(null);
-  }, [letterCount]);
+  }, [blanks, letterCount]);
 
-  // Option 1: Classic Control Center logic
   const handleAddLetter = useCallback(() => {
-    setLetterCount(prev => prev + 1);
     setBlanks(prev => [...prev, null]);
   }, []);
 
+  const handleAddSpace = useCallback(() => {
+    setBlanks(prev => [...prev, SPACE_MARKER]);
+  }, []);
+
   const handleRemoveLetter = useCallback(() => {
-    if (letterCount <= 1) return;
+    if (blanks.length <= 1) return;
     
-    // If last blank has a letter, confirm might be nice, but for simplicity/speed we just remove it
-    setLetterCount(prev => prev - 1);
-    setBlanks(prev => prev.slice(0, -1));
+    // Remove last item
+    const newBlanks = blanks.slice(0, -1);
+    setBlanks(newBlanks);
     
     // If the removed blank was selected, deselect
     if (selectedBlankIndex === blanks.length - 1) {
       setSelectedBlankIndex(null);
     }
-  }, [letterCount, blanks.length, selectedBlankIndex]);
+  }, [blanks, selectedBlankIndex]);
 
   return (
     <div className="app">
@@ -349,44 +365,64 @@ function App() {
               <button 
                 className="control-btn minus" 
                 onClick={handleRemoveLetter}
-                disabled={letterCount <= 1}
+                disabled={blanks.length <= 1}
+                title="Remove Last"
               >
                 <Minus size={20} />
               </button>
               
               <div className="word-container">
                 <div className="word-blanks">
-                  {blanks.map((letter, index) => (
-                    <motion.div
-                      key={index}
-                      className={`letter-blank ${selectedBlankIndex === index ? 'selected' : ''} ${letter ? 'filled' : ''}`}
-                      onClick={() => handleBlankTap(index)}
-                      whileTap={{ scale: 0.95 }}
-                      layout
-                    >
-                      {letter ? (
-                        <motion.span
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-                        >
-                          {letter}
-                        </motion.span>
-                      ) : (
-                        <span className="underscore" />
-                      )}
-                    </motion.div>
-                  ))}
+                  {blanks.map((item, index) => {
+                    if (item === SPACE_MARKER) {
+                      return (
+                        <div key={index} className="word-spacer"></div>
+                      );
+                    }
+                    
+                    return (
+                      <motion.div
+                        key={index}
+                        className={`letter-blank ${selectedBlankIndex === index ? 'selected' : ''} ${item ? 'filled' : ''}`}
+                        onClick={() => handleBlankTap(index)}
+                        whileTap={{ scale: 0.95 }}
+                        layout
+                      >
+                        {item ? (
+                          <motion.span
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                          >
+                            {item}
+                          </motion.span>
+                        ) : (
+                          <span className="underscore" />
+                        )}
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </div>
 
-              <button 
-                className="control-btn plus" 
-                onClick={handleAddLetter}
-                disabled={letterCount >= 15}
-              >
-                <Plus size={20} />
-              </button>
+              <div className="plus-controls">
+                <button 
+                  className="control-btn space" 
+                  onClick={handleAddSpace}
+                  disabled={blanks.length >= 20}
+                  title="Add Space"
+                >
+                  <Space size={18} />
+                </button>
+                <button 
+                  className="control-btn plus" 
+                  onClick={handleAddLetter}
+                  disabled={blanks.length >= 20}
+                  title="Add Letter"
+                >
+                  <Plus size={20} />
+                </button>
+              </div>
             </div>
 
             {/* Virtual Keyboard */}

@@ -173,9 +173,15 @@
   justify-content: center;
   flex: 1;
   width: 100%;
-  gap: 8px;
+  gap: 12px;
   overflow: hidden;
   padding: 0 16px;
+}
+
+.plus-controls {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .control-btn {
@@ -213,6 +219,11 @@
   color: #34c759;
 }
 
+.control-btn.space {
+  color: #007aff;
+  background: #f2f2f7;
+}
+
 .control-btn.minus {
   color: #ff3b30;
 }
@@ -224,7 +235,6 @@
   flex: 1;
   padding: 16px;
   overflow-x: auto;
-  /* Hide scrollbar for cleaner look */
   scrollbar-width: none; 
   -ms-overflow-style: none;
 }
@@ -239,6 +249,12 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+}
+
+.word-spacer {
+  width: 20px;
+  height: 56px;
+  flex-shrink: 0;
 }
 
 .letter-blank {
