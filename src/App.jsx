@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Plus, Minus } from 'lucide-react';
 import './App.css';
 
 // Turkish keyboard layout
@@ -282,6 +282,25 @@ function App() {
     setSelectedBlankIndex(null);
   }, [letterCount]);
 
+  // Option 1: Classic Control Center logic
+  const handleAddLetter = useCallback(() => {
+    setLetterCount(prev => prev + 1);
+    setBlanks(prev => [...prev, null]);
+  }, []);
+
+  const handleRemoveLetter = useCallback(() => {
+    if (letterCount <= 1) return;
+    
+    // If last blank has a letter, confirm might be nice, but for simplicity/speed we just remove it
+    setLetterCount(prev => prev - 1);
+    setBlanks(prev => prev.slice(0, -1));
+    
+    // If the removed blank was selected, deselect
+    if (selectedBlankIndex === blanks.length - 1) {
+      setSelectedBlankIndex(null);
+    }
+  }, [letterCount, blanks.length, selectedBlankIndex]);
+
   return (
     <div className="app">
       <AnimatePresence mode="wait">
@@ -325,31 +344,49 @@ function App() {
               <HangmanParts wrongCount={wrongCount} />
             </div>
 
-            {/* Word Blanks */}
-            <div className="word-container">
-              <div className="word-blanks">
-                {blanks.map((letter, index) => (
-                  <motion.div
-                    key={index}
-                    className={`letter-blank ${selectedBlankIndex === index ? 'selected' : ''} ${letter ? 'filled' : ''}`}
-                    onClick={() => handleBlankTap(index)}
-                    whileTap={{ scale: 0.95 }}
-                    layout
-                  >
-                    {letter ? (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-                      >
-                        {letter}
-                      </motion.span>
-                    ) : (
-                      <span className="underscore" />
-                    )}
-                  </motion.div>
-                ))}
+            {/* Word Blanks with +/- Controls */}
+            <div className="word-controls-container">
+              <button 
+                className="control-btn minus" 
+                onClick={handleRemoveLetter}
+                disabled={letterCount <= 1}
+              >
+                <Minus size={20} />
+              </button>
+              
+              <div className="word-container">
+                <div className="word-blanks">
+                  {blanks.map((letter, index) => (
+                    <motion.div
+                      key={index}
+                      className={`letter-blank ${selectedBlankIndex === index ? 'selected' : ''} ${letter ? 'filled' : ''}`}
+                      onClick={() => handleBlankTap(index)}
+                      whileTap={{ scale: 0.95 }}
+                      layout
+                    >
+                      {letter ? (
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                        >
+                          {letter}
+                        </motion.span>
+                      ) : (
+                        <span className="underscore" />
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
               </div>
+
+              <button 
+                className="control-btn plus" 
+                onClick={handleAddLetter}
+                disabled={letterCount >= 15}
+              >
+                <Plus size={20} />
+              </button>
             </div>
 
             {/* Virtual Keyboard */}
